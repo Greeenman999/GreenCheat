@@ -35,14 +35,13 @@ public class AddonManagerImpl implements AddonManager{
             Attributes attrib = manifest.getMainAttributes();
             String main = attrib.getValue(Attributes.Name.MAIN_CLASS);
 
-            String ADDONINTERFACECLASS_STRING = "de.greenman999.greencheat.addon.AddonInterface";
             URL urlFile = file.toURI().toURL();
             ClassLoader classLoader = new URLClassLoader(new URL[] { urlFile });
             Class cl = classLoader.loadClass(main);
             Class[] interfaces = cl.getInterfaces();
             boolean isAddon = false;
             for(int y = 0; y < interfaces.length && !isAddon; y++)
-                if(interfaces[y].getName().equals(ADDONINTERFACECLASS_STRING))
+                if(interfaces[y].getName().equals("de.greenman999.greencheat.addon.AddonInterface"))
                     isAddon = true;
             if(isAddon){
                 AddonInterface plugin = (AddonInterface) cl.newInstance();
