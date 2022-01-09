@@ -36,7 +36,7 @@ public class AddonManagerImpl implements AddonManager{
             String main = attrib.getValue(Attributes.Name.MAIN_CLASS);
 
             URL urlFile = file.toURI().toURL();
-            ClassLoader classLoader = new URLClassLoader(new URL[] { urlFile });
+            ClassLoader classLoader = new URLClassLoader(new URL[] { urlFile }, this.getClass().getClassLoader());
             Class cl = classLoader.loadClass(main);
             Class[] interfaces = cl.getInterfaces();
             boolean isAddon = false;
