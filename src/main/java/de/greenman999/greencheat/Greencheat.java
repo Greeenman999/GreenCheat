@@ -1,5 +1,6 @@
 package de.greenman999.greencheat;
 
+import de.greenman999.greencheat.command.CommandLoader;
 import de.greenman999.greencheat.pluginsystem.ConsoleMessageLogger;
 import de.greenman999.greencheat.pluginsystem.IPlugin;
 import de.greenman999.greencheat.pluginsystem.PluginLoader;
@@ -15,10 +16,12 @@ public class Greencheat implements ModInitializer {
 
     private static MessageLogger messageLogger = new ConsoleMessageLogger();
 
-    private static File folder = new File(FabricLoader.getInstance().getGameDir() + "/greencheat/plugins");
-    private static PluginConfigLoader pluginConfigLoader = new PropertyPluginConfigLoader();
+    private static CommandLoader commandLoader = new CommandLoader();
 
-    private static PluginLoader<IPlugin> pluginLoader = new PluginLoader<>(messageLogger, folder, pluginConfigLoader);
+    private final static File folder = new File(FabricLoader.getInstance().getGameDir() + "/greencheat/plugins");
+    private final static PluginConfigLoader pluginConfigLoader = new PropertyPluginConfigLoader();
+
+    private final static PluginLoader<IPlugin> pluginLoader = new PluginLoader<>(messageLogger, folder, pluginConfigLoader);
 
     @Override
     public void onInitialize() {
@@ -31,4 +34,13 @@ public class Greencheat implements ModInitializer {
         });
         Runtime.getRuntime().addShutdownHook(pluginUnload);
     }
+
+    public static CommandLoader getCommandLoader() {
+        return commandLoader;
+    }
+
+    public static PluginLoader<IPlugin> getPluginLoader() {
+        return pluginLoader;
+    }
+
 }

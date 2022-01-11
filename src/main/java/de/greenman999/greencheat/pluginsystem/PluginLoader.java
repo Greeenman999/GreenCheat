@@ -1,5 +1,7 @@
 package de.greenman999.greencheat.pluginsystem;
 
+import de.greenman999.greencheat.Greencheat;
+import de.greenman999.greencheat.command.ICommandExecutor;
 import de.greenman999.greencheat.pluginsystem.interfaces.MessageLogger;
 import de.greenman999.greencheat.pluginsystem.interfaces.PluginConfigLoader;
 
@@ -7,6 +9,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.management.GarbageCollectorMXBean;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.HashSet;
@@ -54,7 +57,7 @@ public class PluginLoader<T extends IPlugin> {
 
                         Class<?> clazz = l.loadClass(mainClass);
                         pluginClasses.add(clazz);
-
+                        zipFile.close();
                     } catch (IOException e) {
                         messageLogger.error("Error while loading module file " + jar.getName());
                         e.printStackTrace();
@@ -79,6 +82,7 @@ public class PluginLoader<T extends IPlugin> {
                 T plugin = (T) clazz.newInstance();
                 plugin.onEnable();
                 plugins.add(plugin);
+                Greencheat.getCommandLoader().loadCommands();
                 messageLogger.info(plugin.getPluginIdentity() + " enabled!");
             } catch (InstantiationException | IllegalAccessException e) {
                 e.printStackTrace();
@@ -94,6 +98,7 @@ public class PluginLoader<T extends IPlugin> {
 
         for (T extension : plugins) {
             extension.onDisable();
+            Greencheat.getCommandLoader().loadCommands();
             messageLogger.info(extension.getPluginIdentity() + " disabled!");
         }
 
@@ -104,6 +109,16 @@ public class PluginLoader<T extends IPlugin> {
 
         plugins.clear();
         pluginClasses.clear();
+        System.gc();
 
+
+    }
+
+    public void onCommand(String cmd, String[] args) {
+        for(T plugin : plugins) {
+            for(ICommandExecutor cmdExecutor : Greencheat.getCommandLoader().getCommands()) {
+                cmdExecutor.onCommand(cmd, args);
+            }
+        }
     }
 }
